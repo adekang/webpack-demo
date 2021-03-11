@@ -1,41 +1,33 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-
 const path = require("path");
-const {
-    Template
-} = require("webpack");
+const base = require('./webpack.config.base.js')
 
 module.exports = {
-    mode: 'production',
-    entry: './src/index.js',
-    devtool: 'inline-source-map',
-    devServer: {
-        contentBase: './dist',
-    },
-    output: {
-        filename: '[name].[contenthash].js',
-    },
-    plugins: [new HtmlWebpackPlugin({
-            title: 'XDML',
-            Template: 'src/assets/index.html'
-        }),
+    ...base,
+    mode: "production",
+    plugins: [
+        ...base.plugins,
         new MiniCssExtractPlugin({
             filename: '[name].[contenthash].css',
             chunkFilename: '[id].[contenthash].css',
+            ignoreOrder: false, // Enable to remove warnings about conflicting order
         }),
     ],
     module: {
-        rules: [{
-            test: /\.css$/i,
-            use: [{
-                    loader: MiniCssExtractPlugin.loader,
-                    options: {
-                        publicPath: '../',
+        rules: [
+            ...base.module.rules,
+            {
+                test: /\.css$/i,
+                use: [{
+                        loader: MiniCssExtractPlugin.loader,
+                        options: {
+                            publicPath: '../',
+                        },
                     },
-                },
-                'css-loader',
-            ],
-        }, ],
-    },
+                    'css-loader',
+                ],
+            }
+        ]
+    }
 };
